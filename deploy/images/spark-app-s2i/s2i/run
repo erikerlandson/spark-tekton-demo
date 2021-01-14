@@ -20,30 +20,27 @@ if [ "$IS_EPHEMERAL_SPARK" == "yes" ]; then
     echo
     echo "STANDING UP EPHEMERAL CLUSTER ${S2I_SPARK_CLUSTER}"
     cat > spark-cluster.yaml <<- EOF
-kind: ConfigMap
-apiVersion: v1
+kind: SparkCluster
+apiVersion: radanalytics.io/v1
 metadata:
   name: $S2I_SPARK_CLUSTER
-  labels:
-    radanalytics.io/kind: SparkCluster
-data:
-  config: >-
-    worker:
-      instances: 2
-      cpuLimit: 1
-      memoryLimit: 4Gi
-      cpuRequest: 250m
-      memoryRequest: 1Gi
-    master:
-      instances: 1
-      cpuLimit: 1
-      memoryLimit: 4Gi
-      cpuRequest: 250m
-      memoryRequest: 1Gi
-    customImage: spark-app-s2i-spark:latest
-    env:
+spec:
+  customImage: 'quay.io/radanalyticsio/openshift-spark-py36:2.4.5-2'
+  env:
     - name: SPARK_METRICS_ON
       value: prometheus
+  master:
+    cpuLimit: '1'
+    cpuRequest: '1'
+    instances: '1'
+    memoryLimit: 2Gi
+    memoryRequest: 1Gi
+  worker:
+    cpuLimit: '1'
+    cpuRequest: '1'
+    instances: '2'
+    memoryLimit: 2Gi
+    memoryRequest: 1Gi
 EOF
     echo
     echo "GENERATED spark cluster object YAML"
