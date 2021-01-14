@@ -30,3 +30,15 @@ spec:
         inputs:
           - name: source
             resource: git-spark-app
+    - name: run-spark-app-job
+      runAfter:
+        - build-spark-app-image
+      taskRef:
+        kind: Task
+        name: openshift-client
+      params:
+        - name: ARGS
+          value:
+            - 'create'
+            - '-f'
+            - 'https://raw.githubusercontent.com/erikerlandson/spark-app-s2i/main/deploy/job-spark-app.yaml'
