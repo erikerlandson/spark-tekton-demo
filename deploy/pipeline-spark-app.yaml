@@ -4,15 +4,11 @@ metadata:
   name: spark-app
 spec:
   params:
+    - name: NAMESPACE
+      type: string
     - name: BUILDER_IMAGE
       type: string
       default: quay.io/erikerlandson/spark-app-s2i:latest
-    - name: NAMESPACE
-      type: string
-      default: 'atos'
-    - name: PATH_CONTEXT
-      type: string
-      default: .
   resources:
     - name: git-spark-app
       type: git
@@ -27,7 +23,7 @@ spec:
         - name: OUTPUT_IMAGE_URL
           value: image-registry.openshift-image-registry.svc:5000/$(params.NAMESPACE)/spark-app:latest
         - name: PATH_CONTEXT
-          value: $(params.PATH_CONTEXT)
+          value: examples/spark-pi
         - name: TLSVERIFY
           value: 'false'
       resources:

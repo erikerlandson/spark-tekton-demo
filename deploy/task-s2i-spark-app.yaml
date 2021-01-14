@@ -21,10 +21,6 @@ spec:
     resources:
     - name: source
       type: git
-#  outputs:
-#    resources:
-#    - name: image
-#      type: image
   steps:
   - command:
     - /usr/local/bin/s2i
