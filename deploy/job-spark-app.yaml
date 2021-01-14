@@ -1,19 +1,19 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: spark-app
+  generateName: spark-app-
 spec:
   template:
     metadata:
       name: spark-app
     spec:
       containers:
-      - name: spark-app
-        image: spark-app:latest
-        env:
-          - name: S2I_SPARK_CLUSTER
-            value: ephemeral
-        command:
-         - "sleep"
-         - "3600"
+        - name: spark-app
+          image: spark-app:latest
+          env:
+            - name: S2I_SPARK_CLUSTER
+              value: ephemeral
+          command:
+            - "sleep"
+            - "3600"
       restartPolicy: Never
