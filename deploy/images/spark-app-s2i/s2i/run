@@ -57,8 +57,8 @@ EOF
 
     echo
     echo "WAITING for spark cluster availability"
-    # make sure the spark operator has had time to see the new configmap and stand up a cluster
-    sleep 240
+    # make sure the spark operator has had time to see the new CR and stand up a cluster
+    sleep 60
 fi
 
 
