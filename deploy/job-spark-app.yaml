@@ -14,6 +14,5 @@ spec:
             - name: S2I_SPARK_CLUSTER
               value: ephemeral
           command:
-            - "sleep"
-            - "3600"
+            - '/opt/spark-app/s2i/bin/run'
       restartPolicy: Never
