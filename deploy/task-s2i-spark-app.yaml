@@ -28,6 +28,10 @@ spec:
     - build
     - $(inputs.params.PATH_CONTEXT)
     - $(inputs.params.BUILDER_IMAGE)
+    - --scripts-url
+    - image:///opt/spark-app/s2i/bin
+    - --destination
+    - /opt/spark-app
     - --as-dockerfile
     - /gen-source/Dockerfile.gen
     image: quay.io/openshift-pipeline/s2i:nightly
