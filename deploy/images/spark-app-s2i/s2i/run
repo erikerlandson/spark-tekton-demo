@@ -65,6 +65,7 @@ fi
 # This is the env var seen in the jupyter notebooks by convention, so set that to make a typical
 # spark connection in a data scientist notebook see what it is expecting.
 export SPARK_CLUSTER=$S2I_SPARK_CLUSTER
+export PYSPARK_PYTHON=/opt/rh/rh-python36/root/usr/bin/python3
 
 echo "RUNNING spark application:"
 python3 /opt/spark-app/src/spark-app.py
