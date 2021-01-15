@@ -67,6 +67,7 @@ fi
 export SPARK_CLUSTER=$S2I_SPARK_CLUSTER
 export PYSPARK_PYTHON=/opt/rh/rh-python36/root/usr/bin/python3
 export PYSPARK_DRIVER_PYTHON=$(which python3)
+export PYSPARK_SUBMIT_ARGS=pyspark-shell
 
 echo "RUNNING spark application:"
 python3 /opt/spark-app/src/spark-app.py
