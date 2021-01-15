@@ -34,13 +34,13 @@ spec:
     cpuRequest: '1'
     instances: '1'
     memoryLimit: 2Gi
-    memoryRequest: 1Gi
+    memoryRequest: 2Gi
   worker:
     cpuLimit: '1'
     cpuRequest: '1'
     instances: '2'
     memoryLimit: 2Gi
-    memoryRequest: 1Gi
+    memoryRequest: 2Gi
 EOF
     echo
     echo "GENERATED spark cluster object YAML"

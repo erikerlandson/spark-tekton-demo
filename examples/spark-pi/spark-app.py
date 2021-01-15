@@ -12,7 +12,7 @@ spark_conf = SparkConf()
 # Configure some basic spark cluster sizing parameters
 spark_conf.set('spark.executor.cores', '1')
 spark_conf.set('spark.executor.instances', '2')
-spark_conf.set('spark.executor.memory', '900m')
+spark_conf.set('spark.executor.memory', '1750m')
 
 # The name of your Spark cluster hostname or ip address
 spark_cluster = os.environ['SPARK_CLUSTER']
