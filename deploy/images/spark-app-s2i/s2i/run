@@ -65,9 +65,11 @@ fi
 # This is the env var seen in the jupyter notebooks by convention, so set that to make a typical
 # spark connection in a data scientist notebook see what it is expecting.
 export SPARK_CLUSTER=$S2I_SPARK_CLUSTER
-export PYSPARK_PYTHON=/opt/rh/rh-python36/root/usr/bin/python3
-export PYSPARK_DRIVER_PYTHON=$(which python3)
-export PYSPARK_SUBMIT_ARGS=pyspark-shell
+#export PYSPARK_PYTHON=/opt/rh/rh-python36/root/usr/bin/python3
+#export PYSPARK_DRIVER_PYTHON=$(which python3)
+#export PYSPARK_SUBMIT_ARGS=pyspark-shell
+export SPARK_HOME=/opt/app-root/lib/python3.6/site-packages/pyspark/
+export PYTHONPATH=$PYTHONPATH:/opt/app-root/lib/python3.6/site-packages/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/lib/py4j-0.8.2.1-src.zip
 
 echo "RUNNING spark application:"
 python3 /opt/spark-app/src/spark-app.py
@@ -75,7 +77,7 @@ python3 /opt/spark-app/src/spark-app.py
 if [ "$IS_EPHEMERAL_SPARK" == "yes" ]; then
     echo
     echo "TEARING DOWN EPHEMERAL SPARK ${S2I_SPARK_CLUSTER}"
-    /opt/spark-app/bin/oc delete cm/${S2I_SPARK_CLUSTER}
+    /opt/spark-app/bin/oc delete SparkCluster ${S2I_SPARK_CLUSTER}
 fi
 
 echo
