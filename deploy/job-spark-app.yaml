@@ -1,25 +1,30 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: v1
+kind: Pod
 metadata:
   name: spark-app-demo
+  labels:
+    spark-app-id: demo
 spec:
-  template:
-    metadata:
-      name: spark-app
-      labels:
-        spark-app-id: demo
-    spec:
-      containers:
-        - name: spark-app
-          image: spark-app:latest
-          env:
-            - name: S2I_SPARK_CLUSTER
-              value: ephemeral
-            - name: PYTHONPATH
-              value: '$PYTHONPATH:/opt/app-root/lib/python3.6/site-packages/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/lib/py4j-0.8.2.1-src.zip'
-          command:
-            - '/opt/spark-app/s2i/bin/run'
-      restartPolicy: Never
+  metadata:
+    name: spark-app
+  restartPolicy: Never
+  containers:
+    - name: spark-app
+      image: spark-app:latest
+      resources:
+        limits:
+          cpu: '1'
+          memory: 2Gi
+        requests:
+          cpu: '1'
+          memory: 1Gi
+      env:
+        - name: S2I_SPARK_CLUSTER
+          value: ephemeral
+        - name: PYTHONPATH
+          value: '$PYTHONPATH:/opt/app-root/lib/python3.6/site-packages/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/lib/py4j-0.8.2.1-src.zip'
+      command:
+        - '/opt/spark-app/s2i/bin/run'
 ---
 apiVersion: v1
 kind: Service
