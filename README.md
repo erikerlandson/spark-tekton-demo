@@ -18,7 +18,9 @@ This demo currently has some warts:
 1. Go to the `Pipelines` screen of your namespace, and you should see a pipeline named `spark-app`
 1. Start up a pipeline run: you will need to enter your namespace in this form.
 1. Once the pipeline finishes, you should now have a pod named `spark-app-demo` in your project pods.
-1. If you watch the log output of this pod, it should eventually finish with log output like the following:
+1. If you watch the log output of this pod, it should eventually finish with log output like the example below.
+1. Since this demo currently creates objects of same name each time, you need to manually remove pod `spark-app-demo` and service `spark-app-demo` before you run it again.
+
 
 ```
 RUNNING spark application:
