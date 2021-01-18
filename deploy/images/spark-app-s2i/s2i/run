@@ -71,6 +71,9 @@ export SPARK_CLUSTER=$S2I_SPARK_CLUSTER
 export SPARK_HOME=/opt/app-root/lib/python3.6/site-packages/pyspark/
 export PYTHONPATH=$PYTHONPATH:/opt/app-root/lib/python3.6/site-packages/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/lib/py4j-0.8.2.1-src.zip
 
+echo "ENVIRONMENT VARIABLES"
+env
+
 echo "RUNNING spark application:"
 python3 /opt/spark-app/src/spark-app.py
 
