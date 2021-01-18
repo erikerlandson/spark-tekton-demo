@@ -68,8 +68,8 @@ export SPARK_CLUSTER=$S2I_SPARK_CLUSTER
 #export PYSPARK_PYTHON=/opt/rh/rh-python36/root/usr/bin/python3
 #export PYSPARK_DRIVER_PYTHON=$(which python3)
 #export PYSPARK_SUBMIT_ARGS=pyspark-shell
-export SPARK_HOME=/opt/app-root/lib/python3.6/site-packages/pyspark/
-export PYTHONPATH=$PYTHONPATH:/opt/app-root/lib/python3.6/site-packages/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/lib/py4j-0.8.2.1-src.zip
+#export SPARK_HOME=/opt/app-root/lib/python3.6/site-packages/pyspark/
+#export PYTHONPATH=$PYTHONPATH:/opt/app-root/lib/python3.6/site-packages/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/lib/py4j-0.8.2.1-src.zip
 
 echo "ENVIRONMENT VARIABLES"
 env

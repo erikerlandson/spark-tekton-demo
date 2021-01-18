@@ -1,11 +1,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  generateName: spark-app-
+  name: spark-app-demo
 spec:
   template:
     metadata:
       name: spark-app
+      labels:
+        spark-app-id: demo
     spec:
       containers:
         - name: spark-app
@@ -13,6 +15,19 @@ spec:
           env:
             - name: S2I_SPARK_CLUSTER
               value: ephemeral
+            - name: PYTHONPATH
+              value: '$PYTHONPATH:/opt/app-root/lib/python3.6/site-packages/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/lib/py4j-0.8.2.1-src.zip'
           command:
             - '/opt/spark-app/s2i/bin/run'
       restartPolicy: Never
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-app-demo
+spec:
+  selector:
+    spark-app-id: demo
+  clusterIP: None
+  type: ClusterIP
+  sessionAffinity: None
