@@ -11,8 +11,7 @@ This demo currently has some warts:
 ### How to run:
 
 1. Create a project namespace in your OpenShift cluster
-1. Make sure that the `default` service-account has admin privs
-  1. `$ oc policy add-role-to-user admin -z default -n spark`
+1. Make sure that the `default` service-account has admin privs: `$ oc policy add-role-to-user admin -z default -n spark`
 1. Make sure that Open Data Hub operator and the Openshift Pipelines operator are installed
 1. Create a deployed instance of the ODH operator in your namespace. It requires the odh sub-components to run jupyterhub and spark. Other components can be left off.
 1. Install the yaml files in the `deploy` directory into your project. (except for `job-spark-app.yaml` which is used by the pipeline itself)
