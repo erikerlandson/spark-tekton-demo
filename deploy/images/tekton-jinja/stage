@@ -1,0 +1,22 @@
+#!/bin/sh
+
+tdir=$1
+shift
+rdir=$1
+shift
+
+echo "creating template directory $tdir"
+mkdir -p "$tdir"
+echo "creating rendered directory $rdir"
+mkdir -p "$rdir"
+
+echo "changing to staging directory $tdir"
+cd $1 || { echo "failed to access $tdir"; exit 1; }
+
+echo "staging to directory $(pwd)"
+
+# $@ now contains the remainder of the args,
+# which are assumed to be urls to stage
+for url in "$@"; do
+    curl --remote-header-name --remote-name $url
+done
