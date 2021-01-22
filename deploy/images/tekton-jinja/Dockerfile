@@ -8,7 +8,7 @@ WORKDIR /opt/tekton-jinja
 
 COPY apply.py /opt/tekton-jinja/src/
 COPY Pipfile /opt/tekton-jinja/run/
-COPY run /opt/tekton-jinja/bin/
+COPY run stage /opt/tekton-jinja/bin/
 
 RUN pip3 install pipenv \
  && cd /opt/tekton-jinja/run \
