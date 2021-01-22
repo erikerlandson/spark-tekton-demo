@@ -1,6 +1,6 @@
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.1
 
-RUN microdnf install python36
+RUN microdnf install python36 curl
 # && microdnf update \
 # && microdnf clean all
 
