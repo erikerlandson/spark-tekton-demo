@@ -10,6 +10,10 @@ COPY apply.py /opt/tekton-jinja/src/
 COPY Pipfile /opt/tekton-jinja/run/
 COPY run stage /opt/tekton-jinja/bin/
 
+ENV LANG="en_US.UTF-8" \
+    LC_ALL="en_US.UTF-8" \
+    LC_CTYPE="en_US.UTF-8"
+
 RUN pip3 install pipenv \
  && cd /opt/tekton-jinja/run \
  && pipenv --python 3.6 install \
