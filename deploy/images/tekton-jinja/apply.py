@@ -1,25 +1,45 @@
 import sys
-import os
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 print("\n======================")
 print("Tekton Jinja Template processing")
 
-jjv_prefix = os.environ.get('TEKTON_JINJA_PREFIX') or 'jjv_'
-print("using env var prefix = {pf}".format(pf=jjv_prefix))
+# assumes both of these directories have been created
+# and staged in previous task "staging" step
+print("template and rendered directories")
+assert len(sys.argv) > 2
+tmpldir = sys.argv[1]
+rndrdir = sys.argv[2]
 
-tmpldir = os.environ['TEKTON_JINJA_TEMPLATE_DIR']
-rndrdir = os.environ['TEKTON_JINJA_RENDERED_DIR']
+print("getting filenames from urls")
+assert len(sys.argv) > 3
+j = 3
+assert sys.argv[j] == "--urls"
+j += 1
+tfnames = []
+while j < len(sys.argv):
+    if sys.argv[j] == "--vars":
+        break
+    tn = ((sys.argv[j]).split("/"))[-1]
+    tfnames.append(tn)
+    j += 1
 
-def load_vars_from_env():
-    jjv = {}
-    for k, v in os.environ.items():
-        if k.startswith(jjv_prefix):
-            jjv[k[len(jjv_prefix):]] = v
-    return jjv
+print("getting template variables")
+j += 1
+jjvs = []
+while j < len(sys.argv):
+    jjvs.append(sys.argv[j])
+    j += 1
 
-print("loading jinja variables from environment vars...")
-jjv = load_vars_from_env()
+# this needs to be a list of var/val pairs
+assert len(jjvs) % 2 == 0
+j = 0
+jjv = {}
+while j < len(jjvs):
+    k = sys.argv[j]
+    v = sys.argv[j+1]
+    jjv[k] = v
+    j += 2
 
 print("using jinja variables:")
 print("======================")
@@ -34,7 +54,7 @@ env = Environment( \
         autoescape=select_autoescape(['html', 'xml']) \
     )
 
-for tname in sys.argv[1:]:
+for tname in tfnames:
     print("loading {t}...".format(t=tname))
     tmpl = env.get_template(tname)
     print("rendering {t}...".format(t=tname))
