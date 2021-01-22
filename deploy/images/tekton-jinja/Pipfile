@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-jinja2 = "==2.11.2"
+Jinja2 = "==2.11.2"
 
 [requires]
 python_version = "3.6"
