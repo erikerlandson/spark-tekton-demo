@@ -11,7 +11,7 @@ echo "creating rendered directory $rdir"
 mkdir -p "$rdir"
 
 echo "changing to staging directory $tdir"
-cd $1 || { echo "failed to access $tdir"; exit 1; }
+cd $tdir || { echo "failed to access $tdir"; exit 1; }
 
 echo "staging to directory $(pwd)"
 
