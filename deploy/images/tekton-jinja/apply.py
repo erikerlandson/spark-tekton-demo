@@ -36,9 +36,7 @@ assert len(jjvs) % 2 == 0
 j = 0
 jjv = {}
 while j < len(jjvs):
-    k = sys.argv[j]
-    v = sys.argv[j+1]
-    jjv[k] = v
+    jjv[jjvs[j]] = jjvs[j+1]
     j += 2
 
 print("using jinja variables:")
