@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd /opt/tekton-jinja/run
+
+pipenv run python3 /opt/tekton-jinja/src/apply.py "$@"
