@@ -12,11 +12,12 @@ COPY run stage /opt/tekton-jinja/bin/
 
 ENV LANG="C.UTF-8" \
     LC_ALL="C.UTF-8" \
-    LC_CTYPE="C.UTF-8"
+    LC_CTYPE="C.UTF-8" \
+    WORKON_HOME=/opt/tekton-jinja/run
 
 RUN pip3 install pipenv \
  && cd /opt/tekton-jinja/run \
- && pipenv --python 3.6 install \
+ && pipenv --python 3.6 install --progress-bar off \
  && pipenv check \
  && chown -R 9999:0 /opt/tekton-jinja \
  && chmod -R g+rwX /opt/tekton-jinja
