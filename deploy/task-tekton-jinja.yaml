@@ -1,0 +1,47 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: tekton-jinja
+spec:
+  inputs:
+    params:
+      - name: TEMPLATE_URLS
+        type: array
+        description: List of files to apply jinja template rendering to
+      - name: TEMPLATE_VARS
+        type: array
+        description: |
+          List of jinja template variables and values of the form
+          var1, val1, var2, val2, ...
+      - name: TEMPLATE_DIR
+        description: Directory to place input template files
+        default: template
+      - name: RENDERED_DIR
+        description: Directory to place output rendered templates
+        default: rendered
+      - name: TEKTON_JINJA_IMAGE
+        description: Image to use for tekton jinja task
+        default: 'quay.io/erikerlandson/tekton-jinja:latest'
+  workspaces:
+    - name: output
+      readOnly: false
+      optional: false
+      mountPath: /opt/tekton-jinja/data
+  steps:
+    - name: stage-templates
+      image: $(inputs.params.TEKTON_JINJA_IMAGE)
+      command:
+        - "/opt/tekton-jinja/bin/stage"
+        - "/opt/tekton-jinja/data/$(inputs.params.TEMPLATE_DIR)"
+        - "/opt/tekton-jinja/data/$(inputs.params.RENDERED_DIR)"
+        - "$(inputs.params.TEMPLATE_URLS[*])"
+    - name: render-templates
+      image: $(inputs.params.TEKTON_JINJA_IMAGE)
+      command:
+        - "/opt/tekton-jinja/bin/run"
+        - "/opt/tekton-jinja/data/$(inputs.params.TEMPLATE_DIR)"
+        - "/opt/tekton-jinja/data/$(inputs.params.RENDERED_DIR)"
+        - "--urls"
+        - "$(inputs.params.TEMPLATE_URLS[*])"
+        - "--vars"
+        - "$(inputs.params.TEMPLATE_VARS[*])"
