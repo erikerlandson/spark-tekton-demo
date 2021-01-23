@@ -54,6 +54,7 @@ env = Environment( \
         keep_trailing_newline = True \
     )
 
+print("rendering templates...")
 for tname in tfnames:
     print("loading {t}...".format(t=tname))
     tmpl = env.get_template(tname)
