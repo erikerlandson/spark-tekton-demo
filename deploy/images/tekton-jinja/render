@@ -1,5 +1,0 @@
-#!/bin/sh
-
-cd /opt/tekton-jinja/pyenv
-
-pipenv run python3 /opt/tekton-jinja/src/render.py "$@"
