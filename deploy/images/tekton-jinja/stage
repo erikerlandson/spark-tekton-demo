@@ -18,5 +18,6 @@ echo "staging to directory $(pwd)"
 # $@ now contains the remainder of the args,
 # which are assumed to be urls to stage
 for url in "$@"; do
+    echo "staging $url"
     curl --remote-header-name --remote-name $url
 done
