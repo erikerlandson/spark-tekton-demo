@@ -25,7 +25,6 @@ spec:
   workspaces:
     - name: output
       readOnly: false
-      optional: false
       mountPath: /opt/tekton-jinja/data
   steps:
     - name: stage-templates
@@ -38,7 +37,7 @@ spec:
     - name: render-templates
       image: $(inputs.params.TEKTON_JINJA_IMAGE)
       command:
-        - "/opt/tekton-jinja/bin/run"
+        - "/opt/tekton-jinja/bin/render"
         - "/opt/tekton-jinja/data/$(inputs.params.TEMPLATE_DIR)"
         - "/opt/tekton-jinja/data/$(inputs.params.RENDERED_DIR)"
         - "--urls"
