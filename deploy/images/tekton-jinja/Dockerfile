@@ -6,20 +6,19 @@ RUN microdnf install python36 curl which
 
 WORKDIR /opt/tekton-jinja
 
-COPY apply.py /opt/tekton-jinja/src/
-COPY Pipfile /opt/tekton-jinja/run/
-COPY run stage /opt/tekton-jinja/bin/
+COPY render.py /opt/tekton-jinja/src/
+COPY Pipfile /opt/tekton-jinja/pyenv/
+COPY render stage /opt/tekton-jinja/bin/
 
 ENV LANG="C.UTF-8" \
     LC_ALL="C.UTF-8" \
     LC_CTYPE="C.UTF-8" \
-    WORKON_HOME=/opt/tekton-jinja/run \
+    WORKON_HOME=/opt/tekton-jinja/pyenv \
     PIPENV_NOSPIN=1
 
 RUN pip3 install pipenv \
- && cd /opt/tekton-jinja/run \
+ && cd /opt/tekton-jinja/pyenv \
  && pipenv --python 3.6 install \
- && pipenv check \
  && chown -R 9999:0 /opt/tekton-jinja \
  && chmod -R g+rwX /opt/tekton-jinja
 
