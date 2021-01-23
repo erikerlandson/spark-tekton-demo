@@ -3,7 +3,7 @@ kind: Pod
 metadata:
   name: spark-app-{{ run_id }}
   labels:
-    spark-app-id: {{ run_id }}
+    spark-app-id: "{{ run_id }}"
 spec:
   metadata:
     name: spark-app
@@ -32,7 +32,7 @@ metadata:
   name: spark-app-{{ run_id }}
 spec:
   selector:
-    spark-app-id: {{ run_id }}
+    spark-app-id: "{{ run_id }}"
   clusterIP: None
   type: ClusterIP
   sessionAffinity: None
