@@ -48,8 +48,10 @@ print("======================")
 print("initializing jinja environment ...")
 print("template directory: {d}".format(d=tmpldir))
 env = Environment( \
-        loader=FileSystemLoader(tmpldir), \
-        autoescape=select_autoescape(['html', 'xml']) \
+        loader = FileSystemLoader(tmpldir), \
+        autoescape = select_autoescape(['html', 'xml']), \
+        lstrip_blocks = False, \
+        keep_trailing_newline = True \
     )
 
 for tname in tfnames:
@@ -65,6 +67,3 @@ for tname in tfnames:
     print("writing result to file {fname}".format(fname=rfname))
     with open(rfname, "w") as rfile:
         rfile.write(tren)
-        # jinja seems to be stripping last newline?
-        if tren[-1] != '\n':
-            rfile.write("\n")
