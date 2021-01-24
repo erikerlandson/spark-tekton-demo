@@ -24,7 +24,9 @@ RUN mkdir -p $OC_BIN && \
     mv oc kubectl $OC_BIN && \
     chmod a+rx ${OC_BIN}/* && \
     cd /tmp && \
-    rm -rf ${OC_CLIENT_BINARY} ${OC_CLIENT_BINARY}.tar.gz
+    rm -rf ${OC_CLIENT_BINARY} ${OC_CLIENT_BINARY}.tar.gz && \
+    chown -R 9999:0 /opt/pyspark-s2i && \
+    chmod -R g+rwX /opt/pyspark-s2i
 
 ENV LANG="C.UTF-8" \
     LC_ALL="C.UTF-8" \
@@ -33,10 +35,10 @@ ENV LANG="C.UTF-8" \
     PIPENV_NOSPIN=1
 
 RUN pip3 install pipenv
-# && cd /opt/pyspark-s2i/pyenv \
-# && pipenv --python 3.6 install \
-# && chown -R 9999:0 /opt/pyspark-s2i \
-# && chmod -R g+rwX /opt/pyspark-s2i
+ && cd /opt/pyspark-s2i/pyenv \
+ && pipenv --python 3.6 install \
+ && chown -R 9999:0 /opt/pyspark-s2i/pyenv \
+ && chmod -R g+rwX /opt/pyspark-s2i/pyenv
 
 # emulate an anonymous uid, which is better aligned with OpenShift environment
 USER 9999
