@@ -32,11 +32,11 @@ ENV LANG="C.UTF-8" \
     WORKON_HOME=/opt/pyspark-s2i/pyenv \
     PIPENV_NOSPIN=1
 
-RUN pip3 install pipenv \
- && cd /opt/pyspark-s2i/pyenv \
- && pipenv --python 3.6 install \
- && chown -R 9999:0 /opt/pyspark-s2i \
- && chmod -R g+rwX /opt/pyspark-s2i
+RUN pip3 install pipenv
+# && cd /opt/pyspark-s2i/pyenv \
+# && pipenv --python 3.6 install \
+# && chown -R 9999:0 /opt/pyspark-s2i \
+# && chmod -R g+rwX /opt/pyspark-s2i
 
 # emulate an anonymous uid, which is better aligned with OpenShift environment
 USER 9999
