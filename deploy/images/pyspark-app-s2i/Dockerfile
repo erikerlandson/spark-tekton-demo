@@ -12,13 +12,13 @@ LABEL io.openshift.s2i.destination=/opt/pyspark-s2i
 COPY ./s2i/ /opt/pyspark-s2i/s2i/bin/
 COPY Pipfile /opt/pyspark-s2i/pyenv/
 
-RUN microdnf install python36 wget
+RUN microdnf install python36 wget tar
 
 ENV OC_CLIENT_BINARY=openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit \
     OC_BIN=/opt/pyspark-s2i/bin
 RUN mkdir -p $OC_BIN && \
     cd /tmp && \
-    wget https://github.com/openshift/origin/releases/download/v3.11.0/${OC_CLIENT_BINARY}.tar.gz && \
+    wget -nv https://github.com/openshift/origin/releases/download/v3.11.0/${OC_CLIENT_BINARY}.tar.gz && \
     tar xzf ${OC_CLIENT_BINARY}.tar.gz && \
     cd ${OC_CLIENT_BINARY} && \
     mv oc kubectl $OC_BIN && \
