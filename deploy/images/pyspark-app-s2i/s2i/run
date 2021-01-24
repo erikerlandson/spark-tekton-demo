@@ -1,0 +1,82 @@
+#!/bin/bash
+
+echo "s2i run script"
+
+# In the run mode we will create an ephemeral cluster, if asked for (otherwise, we assume
+# some pre-existing cluster to connect to).
+# Once we have a spark cluster, we run the spark-app.py file supplied by the user
+
+# determine the spark name
+export IS_EPHEMERAL_SPARK="no"
+if [ "$S2I_SPARK_CLUSTER" == "ephemeral" ]; then
+    SPARK_UUID=$(uuidgen | awk 'BEGIN { FS = "-" } ; { print $1 }')
+    export S2I_SPARK_CLUSTER="spark-cluster-${SPARK_UUID}"
+    echo
+    echo "EPHEMERAL CLUSTER NAME: ${S2I_SPARK_CLUSTER}"
+    export IS_EPHEMERAL_SPARK="yes"
+fi
+
+if [ "$IS_EPHEMERAL_SPARK" == "yes" ]; then
+    echo
+    echo "STANDING UP EPHEMERAL CLUSTER ${S2I_SPARK_CLUSTER}"
+    cat > spark-cluster.yaml <<- EOF
+kind: SparkCluster
+apiVersion: radanalytics.io/v1
+metadata:
+  name: $S2I_SPARK_CLUSTER
+spec:
+  customImage: 'quay.io/radanalyticsio/openshift-spark-py36:2.4.5-2'
+  env:
+    - name: SPARK_METRICS_ON
+      value: prometheus
+  master:
+    cpuLimit: '1'
+    cpuRequest: '1'
+    instances: '1'
+    memoryLimit: 2Gi
+    memoryRequest: 2Gi
+  worker:
+    cpuLimit: '1'
+    cpuRequest: '1'
+    instances: '2'
+    memoryLimit: 2Gi
+    memoryRequest: 2Gi
+EOF
+    echo
+    echo "GENERATED spark cluster object YAML"
+    echo ===========================
+    cat spark-cluster.yaml
+    echo ===========================
+
+    echo
+    echo "CREATING spark cluster configmap"
+    /opt/spark-app/bin/oc login --token $(cat /run/secrets/kubernetes.io/serviceaccount/token) \
+                      --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+                      https://kubernetes.default:443
+    /opt/spark-app/bin/oc apply -f spark-cluster.yaml
+
+    echo
+    echo "WAITING for spark cluster availability"
+    # make sure the spark operator has had time to see the new CR and stand up a cluster
+    sleep 60
+fi
+
+# ODH defines SPARK_CLUSTER by convention, so I'll make sure it's defined here as well
+# in case the app is using it.
+export SPARK_CLUSTER=$S2I_SPARK_CLUSTER
+
+echo "ENVIRONMENT VARIABLES"
+env
+
+echo "RUNNING spark application:"
+cd /opt/pyspark-s2i/pyenv
+pipenv run python3 /opt/spark-app/src/spark-app.py
+
+if [ "$IS_EPHEMERAL_SPARK" == "yes" ]; then
+    echo
+    echo "TEARING DOWN EPHEMERAL SPARK ${S2I_SPARK_CLUSTER}"
+    /opt/spark-app/bin/oc delete SparkCluster ${S2I_SPARK_CLUSTER}
+fi
+
+echo
+echo "RUN FINISHED"
