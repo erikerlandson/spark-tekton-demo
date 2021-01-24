@@ -32,9 +32,9 @@ RUN microdnf install python36 wget tar gzip which \
  && cd /tmp \
  && rm -rf ${OC_CLIENT_BINARY} ${OC_CLIENT_BINARY}.tar.gz \
  && cd /opt/pyspark-s2i/pyenv \
- && pipenv --python 3.6 install \
- && chown -R 9999:0 /opt/pyspark-s2i \
- && chmod -R g+rwX /opt/pyspark-s2i
+ && pipenv --python 3.6 install
+# && chown -R 9999:0 /opt/pyspark-s2i \
+# && chmod -R g+rwX /opt/pyspark-s2i
 
 # emulate an anonymous uid, which is better aligned with OpenShift environment
 USER 9999
