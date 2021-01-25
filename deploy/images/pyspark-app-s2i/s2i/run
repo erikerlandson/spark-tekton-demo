@@ -50,10 +50,10 @@ EOF
 
     echo
     echo "CREATING spark cluster configmap"
-    /opt/spark-app/bin/oc login --token $(cat /run/secrets/kubernetes.io/serviceaccount/token) \
+    /opt/pyspark-s2i/bin/oc login --token $(cat /run/secrets/kubernetes.io/serviceaccount/token) \
                       --certificate-authority=/run/secrets/kubernetes.io/serviceaccount/ca.crt \
                       https://kubernetes.default:443
-    /opt/spark-app/bin/oc apply -f spark-cluster.yaml
+    /opt/pyspark-s2i/bin/oc apply -f spark-cluster.yaml
 
     echo
     echo "WAITING for spark cluster availability"
@@ -75,7 +75,7 @@ pipenv run python3 /opt/pyspark-s2i/src/spark-app.py
 if [ "$IS_EPHEMERAL_SPARK" == "yes" ]; then
     echo
     echo "TEARING DOWN EPHEMERAL SPARK ${S2I_SPARK_CLUSTER}"
-    /opt/spark-app/bin/oc delete SparkCluster ${S2I_SPARK_CLUSTER}
+    /opt/pyspark-s2i/bin/oc delete SparkCluster ${S2I_SPARK_CLUSTER}
 fi
 
 echo
