@@ -21,10 +21,10 @@ spec:
       env:
         - name: S2I_SPARK_CLUSTER
           value: ephemeral
-        - name: PYTHONPATH
-          value: '$PYTHONPATH:/opt/app-root/lib/python3.6/site-packages/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/lib/py4j-0.8.2.1-src.zip'
-      command:
-        - '/opt/spark-app/s2i/bin/run'
+#        - name: PYTHONPATH
+#          value: '$PYTHONPATH:/opt/app-root/lib/python3.6/site-packages/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/:/opt/app-root/lib/python3.6/site-packages/pyspark/python/lib/py4j-0.8.2.1-src.zip'
+#      command:
+#        - '/opt/pyspark-s2i/s2i/bin/run'
 ---
 apiVersion: v1
 kind: Service
