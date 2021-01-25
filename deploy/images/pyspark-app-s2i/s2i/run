@@ -58,7 +58,7 @@ EOF
     echo
     echo "WAITING for spark cluster availability"
     # make sure the spark operator has had time to see the new CR and stand up a cluster
-    sleep 60
+    sleep 30
 fi
 
 # ODH defines SPARK_CLUSTER by convention, so I'll make sure it's defined here as well
@@ -70,7 +70,7 @@ env
 
 echo "RUNNING spark application:"
 cd /opt/pyspark-s2i/pyenv
-pipenv run python3 /opt/spark-app/src/spark-app.py
+pipenv run python3 /opt/pyspark-s2i/src/spark-app.py
 
 if [ "$IS_EPHEMERAL_SPARK" == "yes" ]; then
     echo
