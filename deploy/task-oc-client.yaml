@@ -1,26 +1,32 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: openshift-client
+  name: apply-yaml-files
 spec:
   inputs:
-    resources:
-      - name: source
-        type: git
-        optional: true
     params:
-      - name: SCRIPT
-        description: The OpenShift CLI arguments to run
-        type: string
-        default: "oc $@"
-      - name: ARGS
-        description: The OpenShift CLI arguments to run
+      - name: YAML_FILES
         type: array
-        default:
-          - "help"
+        description: |
+          assumes filenames are of form:
+          f1.yaml
+          f2.yaml ...
+      - name: YAML_DIR
+        type: string
+        description: subdirectory to find yaml files
+        default: .
+  workspaces:
+    - name: yamldata
+      readOnly: true
+      mountPath: /yamldata
   steps:
-    - name: oc
+    - name: oc-apply-files
       image: quay.io/openshift/origin-cli:latest
-      script: "$(inputs.params.SCRIPT)"
+      script: |
+        cd /yamldata/$(inputs.params.YAML_DIR)
+        for yf in "$@"; do
+            echo "applying yaml file $yf"
+            oc apply -f $yf
+        done
       args:
-        - "$(inputs.params.ARGS)"
+        - '$(inputs.params.YAML_FILES[*])'
