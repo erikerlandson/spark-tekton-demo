@@ -4,41 +4,64 @@ metadata:
   name: spark-app
 spec:
   params:
-    - name: NAMESPACE
+    - name: RUN_ID
       type: string
     - name: BUILDER_IMAGE
       type: string
-      default: quay.io/erikerlandson/spark-app-s2i:latest
+      default: 'quay.io/erikerlandson/pyspark-app-s2i:latest'
   resources:
     - name: git-spark-app
       type: git
+  workspaces:
+    - name: render
   tasks:
     - name: build-spark-app-image
       taskRef:
         kind: Task
         name: s2i-spark-app
       params:
-        - name: BUILDER_IMAGE
-          value: $(params.BUILDER_IMAGE)
         - name: OUTPUT_IMAGE_URL
-          value: image-registry.openshift-image-registry.svc:5000/$(params.NAMESPACE)/spark-app:latest
+          value: image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/spark-app:latest
         - name: PATH_CONTEXT
           value: examples/spark-pi
         - name: TLSVERIFY
           value: 'false'
+        - name: BUILDER_IMAGE
+          value: $(params.BUILDER_IMAGE)
       resources:
         inputs:
           - name: source
             resource: git-spark-app
+    - name: render-job-yaml
+      taskRef:
+        kind: Task
+        name: tekton-jinja
+      params:
+        - name: TEMPLATE_URLS
+          value:
+            - 'https://raw.githubusercontent.com/erikerlandson/spark-app-s2i/main/deploy/job-spark-app.yaml'
+        - name: TEMPLATE_VARS
+          value:
+            - run_id
+            - $(context.pipelineRun.uid)
+        - name: TEKTON_JINJA_IMAGE
+          value: 'quay.io/erikerlandson/tekton-jinja:0.1.0'
+      workspaces:
+        - name: output
+          workspace: render
     - name: run-spark-app-job
       runAfter:
         - build-spark-app-image
+        - render-job-yaml
       taskRef:
         kind: Task
-        name: openshift-client
+        name: apply-yaml-files
       params:
-        - name: ARGS
+        - name: YAML_FILES
           value:
-            - 'create'
-            - '-f'
-            - 'https://raw.githubusercontent.com/erikerlandson/spark-app-s2i/main/deploy/job-spark-app.yaml'
+            - 'job-spark-app.yaml'
+        - name: YAML_DIR
+          value: rendered
+      workspaces:
+        - name: yamldata
+          workspace: render
