@@ -29,9 +29,9 @@ spec:
     - $(inputs.params.PATH_CONTEXT)
     - $(inputs.params.BUILDER_IMAGE)
     - --scripts-url
-    - image:///opt/spark-app/s2i/bin
+    - image:///opt/pyspark-s2i/s2i/bin
     - --destination
-    - /opt/spark-app
+    - /opt/pyspark-s2i
     - --as-dockerfile
     - /gen-source/Dockerfile.gen
     image: quay.io/openshift-pipeline/s2i:nightly
