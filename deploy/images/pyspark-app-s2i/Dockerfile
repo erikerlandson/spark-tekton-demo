@@ -1,26 +1,24 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.3
+FROM quay.io/erikerlandson/pyspark-ubi:latest
 
 WORKDIR /opt/pyspark-s2i
 
 # s2i scripts assemble, run
-LABEL io.openshift.s2i.scripts-url=image:///opt/pyspark-s2i/s2i/bin
+LABEL io.openshift.s2i.scripts-url=image:///opt/pyspark-s2i/bin
 
 # s2i source loads here
 # The s2i process creates the 'src' directory, so don't add it here
 LABEL io.openshift.s2i.destination=/opt/pyspark-s2i
 
-COPY ./s2i/ /opt/pyspark-s2i/s2i/bin/
-COPY Pipfile /opt/pyspark-s2i/pyenv/
+USER root:0
 
-# I'm using python 3.6 specifically, as it's known to work everywhere
-# and the ODH spark-cluster images from the ephemeral cluster also use it.
+COPY ./s2i/ /opt/pyspark-s2i/bin/
+
 # tar+gzip are used by standard s2i logic
-# 'which' is used by pipenv to locate a python interpreter to run
+# util-linux provides uuidgen, which can be used to generate uniqe spark cluster names
 # wget could in theory be removed after the oc binary install but everything
 # would need to be done in a single RUN to actually reduce total image size
-RUN microdnf install python36 wget tar gzip which util-linux java-1.8.0-openjdk-headless \
- && microdnf clean all \
- && pip3 install pipenv
+RUN microdnf install wget tar gzip util-linux \
+ && microdnf clean all
 
 # download and install the 'oc' static binary
 # note, this one binary adds about 100MB to the image size
@@ -35,29 +33,11 @@ RUN mkdir -p $OC_BIN \
  && chmod a+rx ${OC_BIN}/* \
  && cd /tmp \
  && rm -rf ${OC_CLIENT_BINARY} ${OC_CLIENT_BINARY}.tar.gz \
- && chown -R 9999:0 /opt/pyspark-s2i \
+ && chown -R 9998:0 /opt/pyspark-s2i \
  && chmod -R g+rwX /opt/pyspark-s2i
 
-# environment for doing the pipenv install of the Pipfile
-# WORKON_HOME tells pipenv to put the virtualenv in same dir so
-# it gets properly used when container runs using anonymous uid
-ENV LANG="C.UTF-8" \
-    LC_ALL="C.UTF-8" \
-    LC_CTYPE="C.UTF-8" \
-    WORKON_HOME=/opt/pyspark-s2i/pyenv \
-    PIPENV_NOSPIN=1 \
-    JAVA_HOME=/usr/lib/jvm/jre-1.8.0 \
-    KUBECONFIG=/opt/pyspark-s2i/kubeconfig
-
-# after the install, deleting caches and /tmp saves over 800MB
-RUN cd /opt/pyspark-s2i/pyenv \
- && pipenv --python 3.6 install \
- && rm -rf /tmp/* /root/.cache /root/.local \
- && chown -R 9999:0 /opt/pyspark-s2i/pyenv \
- && chmod -R g+rwX /opt/pyspark-s2i/pyenv
-
-# && pipenv lock --clear \
-# && rm -rf /tmp/* \
+# tell oc to generate kube config somewhere it's allowed to
+ENV KUBECONFIG=/opt/pyspark-s2i/kubeconfig
 
 # emulate an anonymous uid, which is better aligned with OpenShift environment
-USER 9999
+USER 9999:0

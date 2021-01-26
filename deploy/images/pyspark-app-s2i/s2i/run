@@ -69,7 +69,7 @@ echo "ENVIRONMENT VARIABLES"
 env
 
 echo "RUNNING spark application:"
-cd /opt/pyspark-s2i/pyenv
+cd /opt/pyspark
 pipenv run python3 /opt/pyspark-s2i/src/spark-app.py
 
 if [ "$IS_EPHEMERAL_SPARK" == "yes" ]; then
