@@ -18,7 +18,7 @@ COPY Pipfile /opt/pyspark-s2i/pyenv/
 # 'which' is used by pipenv to locate a python interpreter to run
 # wget could in theory be removed after the oc binary install but everything
 # would need to be done in a single RUN to actually reduce total image size
-RUN microdnf install python36 wget tar gzip which \
+RUN microdnf install python36 wget tar gzip which util-linux \
  && microdnf clean all \
  && pip3 install pipenv
 
