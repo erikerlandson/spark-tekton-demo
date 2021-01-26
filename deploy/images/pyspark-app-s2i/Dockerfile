@@ -18,7 +18,7 @@ COPY Pipfile /opt/pyspark-s2i/pyenv/
 # 'which' is used by pipenv to locate a python interpreter to run
 # wget could in theory be removed after the oc binary install but everything
 # would need to be done in a single RUN to actually reduce total image size
-RUN microdnf install python36 wget tar gzip which util-linux \
+RUN microdnf install python36 wget tar gzip which util-linux java-1.8.0-openjdk-headless \
  && microdnf clean all \
  && pip3 install pipenv
 
@@ -45,7 +45,9 @@ ENV LANG="C.UTF-8" \
     LC_ALL="C.UTF-8" \
     LC_CTYPE="C.UTF-8" \
     WORKON_HOME=/opt/pyspark-s2i/pyenv \
-    PIPENV_NOSPIN=1
+    PIPENV_NOSPIN=1 \
+    JAVA_HOME=/usr/lib/jvm/jre-1.8.0 \
+    KUBECONFIG=/opt/pyspark-s2i/kubeconfig
 
 # after the install, deleting caches and /tmp saves over 800MB
 RUN cd /opt/pyspark-s2i/pyenv \
