@@ -29,7 +29,7 @@ spec:
     - $(inputs.params.PATH_CONTEXT)
     - $(inputs.params.BUILDER_IMAGE)
     - --scripts-url
-    - image:///opt/pyspark-s2i/s2i/bin
+    - image:///opt/pyspark-s2i/bin
     - --destination
     - /opt/pyspark-s2i
     - --as-dockerfile
