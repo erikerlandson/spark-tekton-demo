@@ -11,7 +11,7 @@ export IS_EPHEMERAL_SPARK="no"
 if [ "$S2I_SPARK_CLUSTER" == "ephemeral" ]; then
     if [ "x$S2I_SPARK_RUN_ID" == "x" ]; then
         SPARK_UUID=$(uuidgen | awk 'BEGIN { FS = "-" } ; { print $1 }')
-    elif
+    else
         SPARK_UUID=$S2I_SPARK_RUN_ID
     fi
     export S2I_SPARK_CLUSTER="spark-cluster-${SPARK_UUID}"
