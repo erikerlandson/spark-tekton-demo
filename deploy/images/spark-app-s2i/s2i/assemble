@@ -1,7 +1,0 @@
-#!/bin/bash
-
-echo "s2i assemble script"
-
-# The default initial behavior of loading the pyspark file into the directory
-# specified by LABEL io.openshift.s2i.destination is sufficient for this assembly.
-# All that we do is use this python code as the application to run.
