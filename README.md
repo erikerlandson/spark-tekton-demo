@@ -4,9 +4,6 @@ demo of source to image that creates an ephemeral spark cluster and runs a spark
 
 This demo currently has some warts:
 - It needs a service account with permissions to create a SparkCluster object in the namespace. Currently it just assumes that `default` has been edited with admin privs.
-- It cannot create a unique id suffix for objects, so its resulting object names `spark-app-demo` are hardcoded
-- Its git repo is hard coded due to inflexible nature of git tekton resources
-- You have to enter the project namespace has part of the pipeline parameter form.
 
 ### How to run:
 
@@ -15,11 +12,13 @@ This demo currently has some warts:
 1. Make sure that Open Data Hub operator and the Openshift Pipelines operator are installed
 1. Create a deployed instance of the ODH operator in your namespace. It requires the odh sub-components to run jupyterhub and spark. Other components can be left off.
 1. Install the yaml files in the `deploy` directory into your project. (except for `job-spark-app.yaml` which is used by the pipeline itself)
+1. Also install: `oc apply -f https://raw.githubusercontent.com/erikerlandson/tekton-jinja/0.1.0/task-tekton-jinja.yaml`
+1. Create a PVC, name it something like `spark-demo-pvc`. You will need this when kicking off the pipeline run.
 1. Go to the `Pipelines` screen of your namespace, and you should see a pipeline named `spark-app`
-1. Start up a pipeline run: you will need to enter your namespace in this form.
-1. Once the pipeline finishes, you should now have a pod named `spark-app-demo` in your project pods.
+1. Make sure you choose a PVC for the `render` workspace, e.g. `spark-demo-pvc` as mentioned above. This is important because the `render` workspace is used to pass data between tasks, and the default `emptyDir` will lose data after each task, and the demo will fail.
+1. Once the pipeline finishes, you should now have a pod named `spark-app-xxxxxx...` in your project pods.
 1. If you watch the log output of this pod, it should eventually finish with log output like the example below.
-1. Since this demo currently creates objects of same name each time, you need to manually remove pod `spark-app-demo` and service `spark-app-demo` before you run it again.
+1. The pod `spark-app-xxxxx...` and corresponding service `spark-app-xxxxx...` are not deleted when you delete the pipeline-run, so if you want to get rid of these you'll need to do it manually.
 
 
 ```
@@ -31,6 +30,7 @@ Setting default log level to "WARN".
 To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
 Running Spark job to compute pi
 [Stage 0:>                                                          (0 + 0) / 2]  .......
+====================================================
 Pi is roughly 3.143480
 ====================================================
 
