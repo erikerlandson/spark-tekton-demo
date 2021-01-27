@@ -9,7 +9,10 @@ echo "s2i run script"
 # determine the spark name
 export IS_EPHEMERAL_SPARK="no"
 if [ "$S2I_SPARK_CLUSTER" == "ephemeral" ]; then
-    SPARK_UUID=$(uuidgen | awk 'BEGIN { FS = "-" } ; { print $1 }')
+    if [ "x$S2I_SPARK_RUN_ID" == "x" ]; then
+        SPARK_UUID=$(uuidgen | awk 'BEGIN { FS = "-" } ; { print $1 }')
+    elif
+        SPARK_UUID=$S2I_SPARK_RUN_ID
     export S2I_SPARK_CLUSTER="spark-cluster-${SPARK_UUID}"
     echo
     echo "EPHEMERAL CLUSTER NAME: ${S2I_SPARK_CLUSTER}"
