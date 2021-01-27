@@ -1,0 +1,10 @@
+﻿kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: spark-app-demo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
