@@ -1,4 +1,4 @@
-FROM quay.io/erikerlandson/pyspark-ubi:latest
+FROM quay.io/erikerlandson/pyspark-ubi:0.1.0
 
 WORKDIR /opt/pyspark-s2i
 
