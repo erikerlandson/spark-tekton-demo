@@ -4,8 +4,6 @@ metadata:
   name: spark-app
 spec:
   params:
-    - name: RUN_ID
-      type: string
     - name: BUILDER_IMAGE
       type: string
       default: 'quay.io/erikerlandson/pyspark-app-s2i:latest'
@@ -13,6 +11,7 @@ spec:
     - name: git-spark-app
       type: git
   workspaces:
+    # this workspace needs to bind to something persistant, like a PVC (not emptyDir)
     - name: render
   tasks:
     - name: build-spark-app-image
