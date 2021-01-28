@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
-  name: spark-app
+  name: spark-as-pod
 spec:
   params:
     - name: BUILDER_IMAGE

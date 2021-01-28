@@ -1,0 +1,75 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: spark-as-task
+spec:
+  params:
+    - name: REPOSITORY
+      type: string
+      default: 'https://github.com/erikerlandson/spark-app-s2i.git'
+    - name: SPARK_APP
+      type: string
+      default: 'spark-app.py'
+    - name: REVISION
+      type: string
+      default: main
+    - name: CONTEXT
+      type: string
+      default: 'examples/spark-pi'
+  workspaces:
+    # this workspace needs to bind to something persistant, like a PVC (not emptyDir)
+    - name: staged-repo
+  tasks:
+    - name: stage-spark-repo
+      taskRef:
+        kind: Task
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.REPOSITORY)
+        - name: revision
+          value: $(params.REVISION)
+        - name: deleteExisting
+          value: 'true'
+      workspaces:
+        - name: output
+          workspace: staged-repo
+    - name: ephemeral-cluster
+      runAfter:
+        - stage-spark-repo
+      taskRef:
+        kind: Task
+        name: ephemeral-cluster
+      params:
+        - name: SPARK_CLUSTER_ID
+          value: $(context.pipelineRun.uid)
+    - name: run-spark-task
+      runAfter:
+        - ephemeral-cluster
+      taskRef:
+        kind: Task
+        name: run-spark-task
+      params:
+        - name: CONTEXT
+          value: $(params.CONTEXT)
+        - name: SPARK_APP
+          value: $(params.SPARK_APP)
+        - name: SPARK_CLUSTER_NAME
+          value: spark-cluster-$(context.pipelineRun.uid)
+      workspaces:
+        - name: staged
+          workspace: staged-repo
+    - name: clean-up-resources
+      # would prefer to use 'finally' but isn't supported by v1alpha1
+      runAfter:
+        - run-spark-task
+      taskRef:
+        kind: Task
+        name: run-script
+      params:
+        - name: SCRIPT
+          value: |
+            oc delete --ignore-not-found SparkCluster $(tasks.ephemeral-cluster.results.spark-cluster-name)
+            oc delete --ignore-not-found Service $(tasks.run-spark-task.results.task-pod-name)
+        - name: IMAGE
+          value: 'quay.io/openshift/origin-cli:latest'
