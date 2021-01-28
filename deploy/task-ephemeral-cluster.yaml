@@ -1,0 +1,45 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: ephemeral-cluster
+spec:
+  inputs:
+    params:
+      - name: SPARK_CLUSTER_ID
+        type: string
+  results:
+    - name: spark-cluster-name
+      description: the name of the spark cluster that was used
+  steps:
+    - name: ephemeral-spark-cluster
+      image: quay.io/openshift/origin-cli:latest
+      env:
+        - name: SPARK_CLUSTER
+          value: spark-cluster-$(inputs.params.SPARK_CLUSTER_ID)
+      script: |
+        echo -n $SPARK_CLUSTER > $(results.spark-cluster-name.path)
+        cat > /tmp/spark-cluster.yaml <<- EOF
+        kind: SparkCluster
+        apiVersion: radanalytics.io/v1
+        metadata:
+          name: $SPARK_CLUSTER
+        spec:
+          customImage: 'quay.io/radanalyticsio/openshift-spark-py36:2.4.5-2'
+          env:
+            - name: SPARK_METRICS_ON
+              value: prometheus
+          master:
+            cpuLimit: '1'
+            cpuRequest: '1'
+            instances: '1'
+            memoryLimit: 2Gi
+            memoryRequest: 2Gi
+          worker:
+            cpuLimit: '1'
+            cpuRequest: '1'
+            instances: '2'
+            memoryLimit: 2Gi
+            memoryRequest: 2Gi
+        EOF
+        oc apply -f /tmp/spark-cluster.yaml
+        sleep 15
