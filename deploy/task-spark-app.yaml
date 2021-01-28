@@ -1,0 +1,54 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: spark-app
+spec:
+  inputs:
+    params:
+      - name: SPARK_CLUSTER_NAME
+        type: string
+      - name: SPARK_APP
+        type: string
+        default: 'spark-app.py'
+      - name: CONTEXT
+        type: string
+        default: '.'
+  workspaces:
+    - name: staged
+      readOnly: true
+      mountPath: /staged
+  results:
+    - name: task-pod-name
+      description: the name of the pod (and sevice) created for this Task
+  steps:
+    - name: run-spark-job
+      image: quay.io/erikerlandson/pyspark-app-s2i:latest
+      env:
+        - name: SPARK_CLUSTER
+          value: $(inputs.params.SPARK_CLUSTER_NAME)
+        - name: TASK_RUN_NAME
+          value: $(context.taskRun.name)
+        - name: TASK_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+      script: |
+        echo -n $TASK_POD_NAME > $(results.task-pod-name.path)
+        # companion service is used by Spark executors to resolve directly
+        # back to the pod running the driver (here, that is this task pod)
+        cat > /tmp/companion-service.yaml <<- EOF
+        kind: Service
+        apiVersion: v1
+        metadata:
+          name: $TASK_POD_NAME
+        spec:
+          selector:
+            tekton.dev/taskRun: $TASK_RUN_NAME
+          clusterIP: None
+          type: ClusterIP
+          sessionAffinity: None
+        EOF
+        /opt/pyspark-s2i/bin/oc apply -f /tmp/companion-service.yaml
+        sleep 15
+        cd /opt/pyspark
+        pipenv run python3 /staged/src/$(inputs.params.CONTEXT)/$(inputs.params.SPARK_APP)
