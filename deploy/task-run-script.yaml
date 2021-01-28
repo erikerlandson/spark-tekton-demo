@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: run-script
+spec:
+  inputs:
+    params:
+      - name: SCRIPT
+        type: string
+      - name: ARGS
+        type: array
+        default: []
+      - name: IMAGE
+        type: string
+        default: 'registry.access.redhat.com/ubi8/ubi-minimal:8.3'
+  steps:
+    - name: run-script
+      image: $(inputs.params.IMAGE)
+      script: $(inputs.params.SCRIPT)
+      args:
+        - '$(inputs.params.ARGS[*])'
