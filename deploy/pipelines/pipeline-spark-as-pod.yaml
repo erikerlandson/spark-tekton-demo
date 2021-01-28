@@ -38,7 +38,7 @@ spec:
       params:
         - name: TEMPLATE_URLS
           value:
-            - 'https://raw.githubusercontent.com/erikerlandson/spark-app-s2i/main/deploy/job-spark-app.yaml'
+            - 'https://raw.githubusercontent.com/erikerlandson/spark-app-s2i/main/deploy/templates/job-spark-app.yaml'
         - name: TEMPLATE_VARS
           value:
             - run_id
