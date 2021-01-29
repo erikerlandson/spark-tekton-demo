@@ -14,7 +14,7 @@ spec:
     # this workspace needs to bind to something persistant, like a PVC (not emptyDir)
     - name: render
   tasks:
-    - name: spark-tekton-demo-build
+    - name: spark-s2i-build
       taskRef:
         kind: Task
         name: spark-tekton-demo-s2i
@@ -31,14 +31,14 @@ spec:
         inputs:
           - name: source
             resource: spark-tekton-demo
-    - name: spark-tekton-demo-yaml
+    - name: render-template-yaml
       taskRef:
         kind: Task
         name: tekton-jinja
       params:
         - name: TEMPLATE_URLS
           value:
-            - 'https://raw.githubusercontent.com/erikerlandson/spark-tekton-demo/main/deploy/templates/spark-tekton-demo-pod.yaml'
+            - 'https://raw.githubusercontent.com/erikerlandson/spark-tekton-demo/main/deploy/templates/pod-spark-tekton-demo.yaml'
         - name: TEMPLATE_VARS
           value:
             - run_id
@@ -48,10 +48,10 @@ spec:
       workspaces:
         - name: output
           workspace: render
-    - name: spark-tekton-demo-pod
+    - name: run-spark-pod
       runAfter:
-        - spark-tekton-demo-build
-        - spark-tekton-demo-yaml
+        - spark-s2i-build
+        - render-template-yaml
       taskRef:
         kind: Task
         name: apply-yaml-files
