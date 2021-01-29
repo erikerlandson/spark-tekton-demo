@@ -22,7 +22,7 @@ spec:
       description: the name of the pod (and sevice) created for this Task
   steps:
     - name: run-spark-job
-      image: quay.io/erikerlandson/pyspark-app-s2i:latest
+      image: quay.io/erikerlandson/spark-tekton-demo-s2i:latest
       env:
         - name: SPARK_CLUSTER
           value: $(inputs.params.SPARK_CLUSTER_NAME)
