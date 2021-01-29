@@ -1,7 +1,7 @@
 ﻿kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: spark-app-demo
+  name: spark-tekton-demo
 spec:
   accessModes:
     - ReadWriteOnce
