@@ -6,21 +6,21 @@ spec:
   params:
     - name: BUILDER_IMAGE
       type: string
-      default: 'quay.io/erikerlandson/pyspark-app-s2i:latest'
+      default: 'quay.io/erikerlandson/spark-tekton-demo-s2i:latest'
   resources:
-    - name: git-spark-app
+    - name: spark-tekton-demo
       type: git
   workspaces:
     # this workspace needs to bind to something persistant, like a PVC (not emptyDir)
     - name: render
   tasks:
-    - name: build-spark-app-image
+    - name: spark-tekton-demo-build
       taskRef:
         kind: Task
-        name: s2i-spark-app
+        name: spark-tekton-demo-s2i
       params:
         - name: OUTPUT_IMAGE_URL
-          value: image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/spark-app:latest
+          value: image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/spark-tekton-demo:latest
         - name: PATH_CONTEXT
           value: examples/spark-pi
         - name: TLSVERIFY
@@ -30,15 +30,15 @@ spec:
       resources:
         inputs:
           - name: source
-            resource: git-spark-app
-    - name: render-job-yaml
+            resource: spark-tekton-demo
+    - name: spark-tekton-demo-yaml
       taskRef:
         kind: Task
         name: tekton-jinja
       params:
         - name: TEMPLATE_URLS
           value:
-            - 'https://raw.githubusercontent.com/erikerlandson/spark-app-s2i/main/deploy/templates/job-spark-app.yaml'
+            - 'https://raw.githubusercontent.com/erikerlandson/spark-tekton-demo/main/deploy/templates/spark-tekton-demo-pod.yaml'
         - name: TEMPLATE_VARS
           value:
             - run_id
@@ -48,10 +48,10 @@ spec:
       workspaces:
         - name: output
           workspace: render
-    - name: run-spark-app-job
+    - name: spark-tekton-demo-pod
       runAfter:
-        - build-spark-app-image
-        - render-job-yaml
+        - spark-tekton-demo-build
+        - spark-tekton-demo-yaml
       taskRef:
         kind: Task
         name: apply-yaml-files
