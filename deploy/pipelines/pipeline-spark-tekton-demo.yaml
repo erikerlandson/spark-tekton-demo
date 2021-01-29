@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
-  name: spark-as-task
+  name: spark-tekton-demo
 spec:
   params:
     - name: REPOSITORY
