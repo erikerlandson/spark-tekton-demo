@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: spark-app-{{ run_id }}
+  name: spark-tekton-demo-{{ run_id }}
   labels:
     spark-app-id: '{{ run_id }}'
 spec:
@@ -10,7 +10,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: spark-app
-      image: spark-app:latest
+      image: spark-tekton-demo:latest
       resources:
         limits:
           cpu: '1'
@@ -27,7 +27,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: spark-app-{{ run_id }}
+  name: spark-tekton-demo-{{ run_id }}
 spec:
   selector:
     spark-app-id: '{{ run_id }}'
