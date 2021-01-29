@@ -1,11 +1,11 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: git-spark-app
+  name: spark-tekton-demo
 spec:
   type: git
   params:
     - name: revision
       value: main
     - name: url
-      value: https://github.com/erikerlandson/spark-app-s2i.git
+      value: https://github.com/erikerlandson/spark-tekton-demo.git
