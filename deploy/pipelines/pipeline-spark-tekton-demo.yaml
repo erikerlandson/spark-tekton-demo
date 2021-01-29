@@ -6,7 +6,7 @@ spec:
   params:
     - name: REPOSITORY
       type: string
-      default: 'https://github.com/erikerlandson/spark-app-s2i.git'
+      default: 'https://github.com/erikerlandson/spark-tekton-demo.git'
     - name: SPARK_APP
       type: string
       default: 'spark-app.py'
@@ -39,7 +39,7 @@ spec:
         - stage-spark-repo
       taskRef:
         kind: Task
-        name: ephemeral-cluster
+        name: spark-tekton-demo-ephemeral
       params:
         - name: SPARK_CLUSTER_ID
           value: $(context.pipelineRun.uid)
@@ -48,7 +48,7 @@ spec:
         - ephemeral-cluster
       taskRef:
         kind: Task
-        name: run-spark-task
+        name: spark-tekton-demo-run
       params:
         - name: CONTEXT
           value: $(params.CONTEXT)
