@@ -4,9 +4,12 @@ metadata:
   name: spark-tekton-demo-pod
 spec:
   params:
-    - name: BUILDER_IMAGE
+    - name: CONTEXT
       type: string
-      default: 'quay.io/erikerlandson/spark-tekton-demo-s2i:latest'
+      default: 'examples/spark-pi'
+    - name: SPARK_APP
+      type: string
+      default: 'spark-app.py'
   resources:
     - name: spark-tekton-demo
       type: git
@@ -43,6 +46,10 @@ spec:
           value:
             - run_id
             - $(context.pipelineRun.uid)
+            - context_dir
+            - $(params.CONTEXT)
+            - spark_app
+            - $(params.SPARK_APP)
         - name: TEKTON_JINJA_IMAGE
           value: 'quay.io/erikerlandson/tekton-jinja:0.1.0'
       workspaces:

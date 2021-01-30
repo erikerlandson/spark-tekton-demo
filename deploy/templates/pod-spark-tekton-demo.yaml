@@ -23,14 +23,7 @@ spec:
           value: ephemeral
         - name: S2I_SPARK_RUN_ID
           value: '{{ run_id }}'
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: spark-tekton-demo-{{ run_id }}
-spec:
-  selector:
-    spark-app-id: '{{ run_id }}'
-  clusterIP: None
-  type: ClusterIP
-  sessionAffinity: None
+        - name: S2I_SPARK_CONTEXT
+          value: '{{ context_dir }}'
+        - name: S2I_SPARK_APP
+          value: '{{ spark_app }}'

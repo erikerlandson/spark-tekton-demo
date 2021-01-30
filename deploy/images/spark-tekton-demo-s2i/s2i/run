@@ -2,6 +2,24 @@
 
 echo "s2i run script"
 
+# Starting with spark 2.3, spark executors expect to be able to resolve the hostname
+# that our spark driver is running on. In K8s this can be done using a companion Service
+# object that maps to this driver pod.
+echo "CREATING companion service object for spark driver"
+cat > companion-service.yaml <<-EOF
+kind: Service
+apiVersion: v1
+metadata:
+  name: spark-tekton-demo-$S2I_SPARK_RUN_ID
+spec:
+  selector:
+    spark-app-id: $S2I_SPARK_RUN_ID
+  clusterIP: None
+  type: ClusterIP
+  sessionAffinity: None
+EOF
+/opt/pyspark-s2i/bin/oc apply -f companion-service.yaml
+
 # In the run mode we will create an ephemeral cluster, if asked for (otherwise, we assume
 # some pre-existing cluster to connect to).
 # Once we have a spark cluster, we run the spark-app.py file supplied by the user
@@ -65,11 +83,23 @@ EOF
     sleep 30
 fi
 
+echo "ACTIVATING pipenv pyspark environment"
+# activate the pyspark virtualenv we defined via pipenv
+# this emulates entering 'pipenv shell', but we can stay in current shell.
+cd /opt/pyspark
+. $(pipenv --venv)/bin/activate
+# the pipenv shell normally enables these as well
+export PYTHONDONTWRITEBYTECODE=1
+export PIPENV_ACTIVE=1
+
+echo "RUNNING spark application:"
 # ODH defines SPARK_CLUSTER by convention, so I'll make sure it's defined here as well
 # in case the app is using it.
 export SPARK_CLUSTER=$S2I_SPARK_CLUSTER
+# now we can run our spark job from the context directory
+cd /opt/pyspark-s2i/src/$S2I_SPARK_CONTEXT
+python3 $S2I_SPARK_APP
 
-echo "RUNNING spark application:"
 cd /opt/pyspark
 pipenv run python3 /opt/pyspark-s2i/src/spark-app.py
 
@@ -78,6 +108,9 @@ if [ "$IS_EPHEMERAL_SPARK" == "yes" ]; then
     echo "TEARING DOWN EPHEMERAL SPARK ${S2I_SPARK_CLUSTER}"
     /opt/pyspark-s2i/bin/oc delete SparkCluster ${S2I_SPARK_CLUSTER}
 fi
+
+echo "TEARING DOWN companion Service"
+/opt/pyspark-s2i/bin/oc delete Service spark-tekton-demo-$S2I_SPARK_RUN_ID
 
 echo
 echo "RUN FINISHED"
