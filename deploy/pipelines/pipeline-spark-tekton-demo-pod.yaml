@@ -58,7 +58,7 @@ spec:
       params:
         - name: YAML_FILES
           value:
-            - 'job-spark-app.yaml'
+            - 'pod-spark-tekton-demo.yaml'
         - name: YAML_DIR
           value: rendered
       workspaces:
