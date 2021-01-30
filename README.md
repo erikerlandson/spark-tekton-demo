@@ -25,7 +25,7 @@ and manually installing the Spark operator directly.
 1. Create a deployed instance of the ODH operator in your namespace. It requires the odh sub-components for: spark, prometheus. Other components (seldon, superset, strimzi, etc) can be left off.
 1. Install the yaml files in the `deploy/pipelines` directory into your namespace. The command `oc apply -R -f deploy/pipelines` will install all the objects used by both demos.
 1. This version of the demo also uses the `git-clone` task from the standard tekton catalog: `oc apply -f https://raw.githubusercontent.com/tektoncd/catalog/v1alpha1/git/git-clone.yaml`
-1. Go to the `Pipelines` screen of your namespace, and you should see a pipeline named `spark-tekton-demo-pod`. Start a run of this pipeline.
+1. Go to the `Pipelines` screen of your namespace, and you should see a pipeline named `spark-tekton-demo`. Start a run of this pipeline.
 1. Make sure you choose a PVC for the `staged-repo` workspace, e.g. `spark-tekton-demo` as created from the yaml in this repo. This is important because the workspace is used to pass data between tasks, and the default `emptyDir` will lose data after each task, and the demo will fail.
 1. Pipeline parameters are defaulted to run the 'spark-pi' example that is contained in this demo repository.
 1. Once the pipeline run finishes, you can examine the log output for the task named `run-spark-task`. You should see the results of your spark run, as shown below
