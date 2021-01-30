@@ -22,6 +22,8 @@ spec:
     - name: source
       type: git
   steps:
+  # this s2i task is not respecting io.openshift.s2i.scripts-url and io.openshift.s2i.destination
+  # I have to set them explicitly in the command here:
   - command:
     - /usr/local/bin/s2i
     - --loglevel=$(inputs.params.LOGLEVEL)
