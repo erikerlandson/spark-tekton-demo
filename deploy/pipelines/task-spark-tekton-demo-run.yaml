@@ -26,6 +26,13 @@ spec:
     - name: task-pod-name
       description: the name of the pod (and sevice) created for this Task
   steps:
+    - name: repro-step
+      # Adding this step before the run-spark-job step below causes
+      # the spark run to fail - the companion service created no longer works.
+      # Removing this 'repro-step' allows the spark job to work correctly again.
+      image: quay.io/erikerlandson/spark-tekton-demo-s2i:latest
+      script: |
+        echo "add a step to see if multiple steps breaks spark"
     - name: run-spark-job
       image: quay.io/erikerlandson/spark-tekton-demo-s2i:latest
       env:
