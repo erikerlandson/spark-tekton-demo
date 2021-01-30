@@ -35,8 +35,6 @@ spec:
         - name: output
           workspace: staged-repo
     - name: ephemeral-cluster
-      runAfter:
-        - stage-spark-repo
       taskRef:
         kind: Task
         name: spark-tekton-demo-ephemeral
@@ -45,6 +43,7 @@ spec:
           value: $(context.pipelineRun.uid)
     - name: run-spark-task
       runAfter:
+        - stage-spark-repo
         - ephemeral-cluster
       taskRef:
         kind: Task
