@@ -23,7 +23,5 @@ spec:
           value: ephemeral
         - name: S2I_SPARK_RUN_ID
           value: '{{ run_id }}'
-        - name: S2I_SPARK_CONTEXT
-          value: '{{ context_dir }}'
         - name: S2I_SPARK_APP
           value: '{{ spark_app }}'

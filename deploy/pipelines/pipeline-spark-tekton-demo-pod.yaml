@@ -25,11 +25,11 @@ spec:
         - name: OUTPUT_IMAGE_URL
           value: image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/spark-tekton-demo:latest
         - name: PATH_CONTEXT
-          value: examples/spark-pi
+          value: $(params.CONTEXT)
         - name: TLSVERIFY
           value: 'false'
         - name: BUILDER_IMAGE
-          value: $(params.BUILDER_IMAGE)
+          value: 'quay.io/erikerlandson/spark-tekton-demo-s2i:latest'
       resources:
         inputs:
           - name: source
@@ -46,8 +46,6 @@ spec:
           value:
             - run_id
             - $(context.pipelineRun.uid)
-            - context_dir
-            - $(params.CONTEXT)
             - spark_app
             - $(params.SPARK_APP)
         - name: TEKTON_JINJA_IMAGE

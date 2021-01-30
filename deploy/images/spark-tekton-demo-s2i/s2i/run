@@ -97,11 +97,10 @@ echo "RUNNING spark application:"
 # in case the app is using it.
 export SPARK_CLUSTER=$S2I_SPARK_CLUSTER
 # now we can run our spark job from the context directory
-cd /opt/pyspark-s2i/src/$S2I_SPARK_CONTEXT
+# note the actual context-dir setting is resolved during the s2i build task,
+# so everything under /opt/pyspark-s2i/src is our context
+cd /opt/pyspark-s2i/src
 python3 $S2I_SPARK_APP
-
-cd /opt/pyspark
-pipenv run python3 /opt/pyspark-s2i/src/spark-app.py
 
 if [ "$IS_EPHEMERAL_SPARK" == "yes" ]; then
     echo
