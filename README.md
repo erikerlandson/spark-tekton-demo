@@ -13,6 +13,7 @@ The overall workflow is as follows:
 1. Run the spark job in a container, using the ephemeral Spark cluster.
 
 The workflow is illustrated by the following diagram:
+
 ![Workflow Diagram](assets/workflow-features.png)
 
 This repository contains implementations of two styles of tekton pipeline for running spark jobs.
