@@ -2,6 +2,19 @@
 
 demo of running apache spark jobs using tekton and s2i workflows
 
+### Description
+
+This repository demonstrates how to run an Apache Spark job as a repeatable pipelined workflow in OpenShift or Kubernetes,
+using tekton (OpenShift Pipelines) as the pipeline platform.
+The overall workflow is as follows:
+1. Download spark code from a specified git repository, with a specified branch, tag, SHA, etc.
+1. Stage that code on a specified image which is pulled from an image registry such as quay.io or docker hub.
+1. Generate an on-demand and dedicated Spark cluster (referred to as an "ephemeral" cluster)
+1. Run the spark job in a container, using the ephemeral Spark cluster.
+
+The workflow is illustrated by the following diagram:
+![Workflow Diagram](assets/workflow-features.png)
+
 This repository contains implementations of two styles of tekton pipeline for running spark jobs.
 1. executing the spark job directly in a pipeline task step.
 1. spawning an independent pod that runs the spark job.
